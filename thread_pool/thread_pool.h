@@ -1,3 +1,15 @@
+/**
+ * @file thread_pool.h
+ * @author 季杰 (396438446@qq.com)
+ * @brief 使用C++11构建的线程池
+ * @version 0.1
+ * @date 2019-08-27
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
+
+
 #pragma once
 
 #include <functional>
@@ -18,9 +30,9 @@ public:
 
     /**
      * @brief 往线程池中添加线程
-     * 
-     * @tparam F 
-     * @tparam Args 
+     *
+     * @tparam F
+     * @tparam Args
      * @param f 运行函数
      * @param args 运行函数的参数
      * @return std::future<decltype(f(args...))> 返回异步结果
@@ -68,7 +80,6 @@ inline ThreadPool::ThreadPool(size_t count) : stop_(false) {
 template <typename F, typename... Args>
 auto ThreadPool::insert(F&& f, Args&&... args)
     -> std::future<decltype(f(args...))> {
-
     // using表示类型别名,类似typedef
     // typename std::result_of<F(Args...)>::type
     using result_type = decltype(f(args...));
