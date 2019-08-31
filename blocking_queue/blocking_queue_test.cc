@@ -17,24 +17,19 @@ void wirteNoWait(){
     }
 }
 
-void readd() {
-    for (int i = 0; i < 1500; i++) {
-        block_queue.pop();
-    }
-}
 
 void readFor() {
-    for (int i = 0; i < 1500; i++) {
-        block_queue.popFor(std::chrono::milliseconds(3));
+    char c;
+    for (int i = 0; i < 3000; i++) {
+        block_queue.popFor(c, std::chrono::milliseconds(3));
     }
 }
 
 int main() {
     std::vector<std::thread> threads_write;
     std::vector<std::thread> threads_write_nowait;
-    std::thread tread1(readd);
-    std::thread tread2(readFor);
-    for (int i = 0; i < 10; i++) {
+    std::thread thread_read(readFor);
+    for (int i = 0; i < 3; i++) {
         threads_write.emplace_back(std::thread(writee));
         threads_write_nowait.emplace_back(std::thread(wirteNoWait));
     }
@@ -48,8 +43,7 @@ int main() {
     }
     std::cout << block_queue.size() << std::endl;
 
-    tread1.join();
-    tread2.join();
+    thread_read.join();
 
     std::cout << block_queue.size() << std::endl;
 

@@ -1,27 +1,27 @@
 /**
  * @file blocking_queue.h
- * @author 季杰 (396438446@qq.com)
- * @brief 使用了boost库中的circular_buffer的堵塞队列
+ * @author Ji Jie (396438446@qq.com)
+ * @brief Blocking queue use circular buffer in boost, the cirular buffer is
+ * a buffer which acts like a queue but has a limited size. When pushed number
+ * exceed the limited size, elements pushed earlier will be discord
  * @version 0.1
  * @date 2019-08-28
- * 
+ *
  * @copyright Copyright (c) 2019
- * 
+ *
  */
 
 #pragma once
 
+#include <chrono>
 #include <condition_variable>
 #include <mutex>
-#include <chrono>
 #include "boost/circular_buffer.hpp"
 
-
 /**
- * @brief 堵塞队列，也就是生产者消费者模型，使用了boost库中
- * 的circular_buffer
+ * @brief Blocking queue, used in scene of producer and consumer model
  * 
- * @tparam T 存储于circular_buffer中的类型
+ * @tparam T The type of element staged in cirular buffer 
  */
 template <typename T>
 class BlockingQueue {
@@ -29,9 +29,9 @@ public:
     typedef T value_type;
 
     /**
-     * @brief 构造函数
+     * @brief Construct a new Blocking Queue object
      * 
-     * @param max_size circular_buffer的最大容量，超过后插入会将之前的数据删除
+     * @param max_size The max size of cirular buffer
      */
     explicit BlockingQueue(size_t max_size) : que_(max_size) {}
     ~BlockingQueue() = default;
@@ -44,9 +44,10 @@ public:
     }
 
     /**
-     * @brief 非等待的插入函数，如果队列已满就将circular_buffer中的旧数据直接删除
+     * @brief Push with no wait, will not be blocked because the circular buffer
+     * is full, just discard the former element 
      * 
-     * @param item 插入的数据
+     * @param item The item need be pushed, should use std::forward to transfer parameter
      */
     void pushNoWait(T &&item) {
         std::unique_lock<std::mutex> lock(mutex_);
@@ -54,32 +55,28 @@ public:
         pop_cv_.notify_one();
     }
 
-    T pop() {
-        std::unique_lock<std::mutex> lock(mutex_);
-        pop_cv_.wait(lock, [this] { return !this->que_.empty(); });
-        T front(std::move(que_.front()));
-        que_.pop_front();
-        push_cv_.notify_one();
-        return front;
-    }
-
     /**
-     * @brief 移除并返回前端元素，如果一段时间内没等到也直接返回
-     * 
-     * @param wait_duration 等待的时间(ms)
-     * @return T 返回前端元素
+     * @brief Remove and return the front element by condition variable waiting
+     * for some miliseconds
+     *
+     * @param popped_item Reference of item be popped from circular buffer
+     * @param wait_duration The wait duration of condtion variable
+     * @return true The item has been popped successfully
+     * @return false The circular buffer is empty or overtime
      */
-    T popFor(std::chrono::milliseconds wait_duration) {
+    bool popFor(T &popped_item, std::chrono::milliseconds wait_duration) {
         std::unique_lock<std::mutex> lock(mutex_);
-        pop_cv_.wait_for(lock, wait_duration,
-                         [this] { return !this->que_.empty(); });
-        T front(std::move(que_.front()));
+        if (!pop_cv_.wait_for(lock, wait_duration,
+                              [this] { return !this->que_.empty(); })) {
+            return false;
+        }
+        popped_item = std::move(que_.front());
         que_.pop_front();
         push_cv_.notify_one();
-        return front;
+        return true;
     }
 
-    size_t size() const{
+    size_t size() const {
         std::lock_guard<std::mutex> lock(mutex_);
         return que_.size();
     }
