@@ -1,9 +1,9 @@
 /**
  * @file blocking_queue.h
  * @author Ji Jie (396438446@qq.com)
- * @brief Blocking queue use circular buffer in boost, the cirular buffer is
- * a buffer which acts like a queue but has a limited size. When pushed number
- * exceed the limited size, elements pushed earlier will be discord
+ * @brief Blocking queue, use circular buffer in boost, the circular buffer is
+ * a buffer which acts like a queue but has a limited size. When pushed the number
+ * exceeds the limited size, elements pushed earlier will be discarded
  * @version 0.1
  * @date 2019-08-28
  *
@@ -44,7 +44,7 @@ public:
     }
 
     /**
-     * @brief Push with no wait, will not be blocked because the circular buffer
+     * @brief Push with no wait, will not blocked because the circular buffer
      * is full, just discard the former element 
      * 
      * @param item The item need be pushed, should use std::forward to transfer parameter
