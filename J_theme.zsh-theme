@@ -18,12 +18,12 @@ eval my_orange='$FG[214]'
 
 # represent the user and machine like ROOT@... 
 # right prompt
-#if type "virtualenv_prompt_info" > /dev/null
-#then
-#	RPROMPT='$FG[078]$(virtualenv_prompt_info)%{$reset_color%} $my_gray%n@%m%{$reset_color%}%'
-#else
-#	RPROMPT='$my_gray%n@%m%{$reset_color%}%'
-#fi
+if type "virtualenv_prompt_info" > /dev/null
+then
+	RPROMPT='$FG[078]$(virtualenv_prompt_info)%{$reset_color%} $my_gray%n@%m%{$reset_color%}%'
+else
+	RPROMPT='$my_gray%n@%m%{$reset_color%}%'
+fi
 
 # git settings
 ZSH_THEME_GIT_PROMPT_PREFIX="$FG[075]($FG[078]"
