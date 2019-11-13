@@ -7,7 +7,7 @@ local return_code="%(?..%{$fg[red]%}%? â†µ%{$reset_color%})"
 PROMPT='$FG[237]${(l.COLUMNS..-.)}%{$reset_color%}
 $FG[032]%~\
  $(git_prompt_info)$(hg_prompt_info) 
-$FG[105]%(!.$.Â»)%{$reset_color%} '
+$FG[105]%(!.$.»)%{$reset_color%} '
 PROMPT2='%{$fg[red]%}\ %{$reset_color%}'
 RPS1='${return_code}'
 
