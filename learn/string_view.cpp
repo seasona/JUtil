@@ -32,6 +32,7 @@
 // StringViewSubstr       1.06 ns         1.06 ns    606217924
 
 // the std::string_view can transport argument both std::string and const char*
+/// notice: do not use reference of string_view in argument
 void stringViewInterface(std::string_view sv) { std::cout << sv << std::endl; }
 
 int main() {
