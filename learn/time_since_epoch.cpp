@@ -4,6 +4,7 @@
 int main() {
     using std::chrono::duration_cast;
 
+    /// time_since_epoch can support nanoseconds
     auto now = std::chrono::high_resolution_clock::now();
     std::cout
         << duration_cast<std::chrono::seconds>(now.time_since_epoch()).count()
